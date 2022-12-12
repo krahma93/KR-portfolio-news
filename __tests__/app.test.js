@@ -14,15 +14,19 @@ describe('GET /api/topics', ()=>{
         return request(app)
         .get('/api/topics')
         .expect(200)
-        .then(({body: topicsArray})=>{
-            expect((topicsArray)).toBeInstanceOf(Array);
-            expect(topicsArray.length).toBe(3); 
-            expect(topicsArray[0]).toEqual(
-                  expect.objectContaining({
-                    slug: expect.any(String),
-                    description: expect.any(String),
+        .then(({body: {topics} }) => {
+            console.log(topics)
+            expect(topics).toBeInstanceOf(Array);
+            expect(topics.length).toBe(3); 
+            topics.forEach(topics => {
+                expect(topics).toEqual(
+                expect.objectContaining({
+                  slug: expect.any(String),
+                  description: expect.any(String),
+              
+                })) })
                 
-                  }))     
         })
     })
 })
+
