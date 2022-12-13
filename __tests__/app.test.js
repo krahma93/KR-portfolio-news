@@ -101,50 +101,59 @@ describe("api/articles/:article_id", () => {
       });
   });
 
-    describe("/api/articles/:article_id/comments", () => {
-      test("repond with an array of comments for the given article ID", () => {
-        return request(app)
-          .get("/api/articles/1/comments")
-          .expect(200)
-          .then(({ body: { comments } }) => {
-            expect(comments.length).toBe(11);
-            expect(comments[0]).toEqual(
-              expect.objectContaining({
-                comment_id: expect.any(Number),
-                votes: expect.any(Number),
-                created_at: expect.any(String),
-                author: expect.any(String),
-                body: expect.any(String),
-              })
-            );
-          });
-      });
-      test("Status 400 - Bad request when invalid input is passed", () => {
-        return request(app)
-          .get("/api/articles/banana/comments")
-          .expect(400)
-          .then(({ body: { msg } }) => {
-            expect(msg).toBe("Invalid ID type");
-          });
-      });
-      test("Status 404 - Valid request but item not found", () => {
-        return request(app)
-          .get("/api/articles/123/comments")
-          .expect(404)
-          .then(({ body: { msg } }) => {
-            expect(msg).toBe("No article found");
-          });
-      });
+  describe("/api/articles/:article_id/comments", () => {
+    test("repond with an array of comments for the given article ID", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(comments.length).toBe(11);
+          comments.forEach(comment => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+            })
+          );
+        });
     });
-
-    describe(" 404 Not Found", () => {
-      test("returns page not found 404", () => {
-        return request(app)
-          .get("/api/bananna")
-          .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).toBe("Page not found");
-          });
-      });
+})
+    test('return 200 and an empty array if the article exsists but has no comments', () => {
+        return request(app).get('/api/articles/2/comments').expect(200)
+        .then(({ body: { comments } }) => {
+            expect(comments).toBeInstanceOf(Array);
+            expect(comments.length).toBe(0);
+        });
+    });
+    test("Status 400 - Bad request when invalid input is passed", () => {
+      return request(app)
+        .get("/api/articles/banana/comments")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Invalid ID type");
+        });
+    });
+    test("Status 404 - Valid request but item not found", () => {
+      return request(app)
+        .get("/api/articles/123")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Article id does not exist");
+        });
     });
   });
+
+  describe(" 404 Not Found", () => {
+    test("returns page not found 404", () => {
+      return request(app)
+        .get("/api/bananna")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Page not found");
+        });
+    });
+  });
+});
