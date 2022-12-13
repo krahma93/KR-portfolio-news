@@ -91,10 +91,17 @@ describe("api/articles/:article_id", () => {
             .get("/api/articles/1000")
             .expect(404)
             .then(({ body }) => {
-                expect(body.msg).toBe("Article id does not exsist")
+                expect(body.msg).toBe("Article id does not exist")
             }) 
     })
-})
+    test("Status 400 -  when submitting an invalid ID", () => {
+        return request(app)
+          .get("/api/articles/bananas")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Invalid ID type");
+          });
+        })
 
     describe(' 404 Not Found', ()=>{
         test("returns page not found 404", () => {
@@ -105,4 +112,5 @@ describe("api/articles/:article_id", () => {
                     expect(body.msg).toBe("Page not found")
                 }) 
         })
-        })
+    })
+})
