@@ -4,8 +4,6 @@ const{ getArticles}=require('./controllers/articlescontrollers')
 
 const app=express();
 
-app.use(express.json());
-
 
 app.get("/api/topics", getTopics);
 

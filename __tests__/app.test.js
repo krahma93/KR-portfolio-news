@@ -43,7 +43,6 @@ describe('api/articles', () => {
                     author: expect.any(String),
                     title: expect.any(String),
                     article_id: expect.any(Number),
-                    body: expect.any(String),
                     topic: expect.any(String),
                     created_at: expect.any(String),
                     votes: expect.any(Number),
@@ -59,7 +58,6 @@ describe('api/articles', () => {
             .expect(200)
             .then((res) => {
                 const articles = res.body.articles;
-                console.log(articles)
                 expect(articles[0].article_id).toBe(4)
                 expect(articles[0].created_at).toBe("2020-05-06T01:14:00.000Z")
                 expect(articles[11].article_id).toBe(8)
