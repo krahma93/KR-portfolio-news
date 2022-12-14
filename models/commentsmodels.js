@@ -8,7 +8,7 @@ exports.fetchCommentsById = (id) => {
       [id]
     )
     .then(({ rows }) => {
-     
+      
       return rows;
     });
 };

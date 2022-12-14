@@ -138,7 +138,7 @@ describe("api/articles/:article_id", () => {
     });
     test("Status 404 - Valid request but item not found", () => {
       return request(app)
-        .get("/api/articles/123")
+        .get("/api/articles/10000/comments")
         .expect(404)
         .then(({ body: { msg } }) => {
           expect(msg).toBe("Article id does not exist");

@@ -16,6 +16,10 @@ app.get("/api/articles/:article_id", getArticle);
 
 app.get("/api/articles/:article_id/comments", commentsById);
 
+
+
+
+
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "Page not found" });
 });
