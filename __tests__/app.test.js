@@ -3,6 +3,8 @@ const app = require("../app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data/index");
+const { response } = require('express');
+
 
 beforeEach(() => seed(testData));
 
@@ -97,7 +99,7 @@ describe("api/articles/:article_id", () => {
       .get("/api/articles/bananas")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid ID type");
+        expect(body.msg).toBe("Bad request");
       });
   });
 
@@ -133,7 +135,7 @@ describe("api/articles/:article_id", () => {
         .get("/api/articles/banana/comments")
         .expect(400)
         .then(({ body: { msg } }) => {
-          expect(msg).toBe("Invalid ID type");
+          expect(msg).toBe("Bad request");
         });
     });
     test("Status 404 - Valid request but item not found", () => {
@@ -146,6 +148,57 @@ describe("api/articles/:article_id", () => {
     });
   });
 
+  describe('Post api/articles/id/comment ', () => {
+    test('returns posted comment if a valid username is provided', () => {
+        const input = {username: 'butter_bridge', body: 'I love this sprint'}
+
+        return request(app).post('/api/articles/1/comments').send(input).expect(201)
+        .then(({ body: { comment } }) => {
+            expect(comment).toBeInstanceOf(Object);
+            expect(comment).toEqual(
+                expect.objectContaining({
+                    body: "I love this sprint",
+                    votes: 0,
+                    author: "butter_bridge",
+                    article_id: expect.any(Number),
+                    created_at: expect.any(String),
+                    comment_id: expect.any(Number)
+                })
+            );
+        })
+    });
+
+    test('returns 404 when inputted id does not exsit', () => {
+        const input = {username: 'butter_bridge', body: 'I love this sprint'}
+        return request(app).post('/api/articles/1000/comments').send(input).expect(404)
+        .then(({body: { msg }}) => {
+            expect(msg).toBe('Article id does not exist')
+        })
+    });
+
+    test('returns 400 when wrong data is inputted on ID path', () => {
+        const input = {username: 'butter_bridge', body: 'I love this sprint'}
+        return request(app).post('/api/articles/love/comments').send(input).expect(400)
+        .then(({body: { msg }}) => {
+            expect(msg).toBe('Bad request')
+        })
+    });
+    test('returns 400 when incorrect post data is inputted', () => {
+        const input = {username: 'butter_bridge'}
+        return request(app).post('/api/articles/1/comments').send(input).expect(400)
+        .then(({body: { msg }}) => {
+            expect(msg).toBe('Bad request')
+        })
+    });
+
+    test('returns 404 when a username does not exist', () => {
+        const input = {username: 'incediblehulk', body: 'I love this sprint'}
+        return request(app).post('/api/articles/1/comments').send(input).expect(404)
+        .then(({body: { msg }}) => {
+            expect(msg).toBe('Article id does not exist')
+        })
+    });
+
   describe(" 404 Not Found", () => {
     test("returns page not found 404", () => {
       return request(app)
@@ -156,4 +209,6 @@ describe("api/articles/:article_id", () => {
         });
     });
   });
-});
+  })
+})
+
