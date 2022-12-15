@@ -9,6 +9,7 @@ const {
 const {
   commentsById,
   postArticleComment,
+  deleteComment
 } = require("./controllers/commentscontrollers");
 
 const { getUsers } = require("./controllers/usercontrollers");
@@ -32,6 +33,9 @@ app.patch("/api/articles/:article_id", patchArticle);
 app.get("/api/users", getUsers);
 
 app.get("/api/articles/:article_id/comments", getComments);
+
+app.delete("/api/comments/:comment_id", deleteComment)
+
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "Page not found" });
@@ -58,6 +62,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  console.log(err)
   res.status(500).send({ msg: "Internal Server Error" });
 });
 
