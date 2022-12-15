@@ -10,6 +10,9 @@ const {
   postArticleComment,
 } = require("./controllers/commentscontrollers");
 
+const {getUsers} = require ("./controllers/usercontrollers")
+
+
 const app = express();
 
 app.use(express.json())
@@ -25,6 +28,9 @@ app.get("/api/articles/:article_id/comments", commentsById);
 app.post("/api/articles/:article_id/comments", postArticleComment);
 
 app.patch('/api/articles/:article_id', patchArticle)
+
+app.get("/api/users", getUsers)
+
 
 
 app.all("/*", (req, res) => {
