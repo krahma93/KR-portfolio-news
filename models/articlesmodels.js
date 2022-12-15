@@ -28,3 +28,14 @@ exports.selectArticle = (id) => {
       }
     });
 };
+
+exports.updateVotes = (id, votes) => {
+  return db
+    .query(
+      `UPDATE articles SET votes = votes + $2 WHERE article_id = $1 RETURNING *;`,
+      [id, votes]
+    )
+    .then(({ rows: article }) => {
+      return article[0];
+    });
+};
