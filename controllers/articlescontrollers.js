@@ -5,10 +5,14 @@ const {
   updateVotes,
 } = require("../models/articlesmodels");
 
-exports.getArticles = (req, res, next) => {
-  fetchArticles().then((articles) => {
+exports.getArticles = async (req, res, next) => {
+  const { topic, sort_by, order } = req.query;
+  try {
+    const articles = await fetchArticles(topic, sort_by, order);
     res.status(200).send({ articles });
-  });
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.getArticle = (req, res, next) => {
@@ -25,7 +29,7 @@ exports.getArticle = (req, res, next) => {
 exports.patchArticle = (req, res, next) => {
   const id = req.params.article_id;
   const body = req.body.inc_votes;
-  const promises = [updateVotes(id,body), selectArticle(id)]
+  const promises = [updateVotes(id, body), selectArticle(id)];
   Promise.all(promises)
     .then((promises) => {
       res.status(200).send({ article: promises[0] });

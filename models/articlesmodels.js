@@ -1,18 +1,25 @@
 const db = require("../db/connection");
 
-exports.fetchArticles = () => {
-  return db
-    .query(
-      `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes,
-    (COUNT(comments.comment_id) ::INT) AS comment_count
-    FROM articles
-    LEFT JOIN comments ON comments.article_id = articles.article_id
-    GROUP BY articles.article_id;`
-    )
-    .then((articles) => {
-      return articles.rows;
-    });
-};
+exports.fetchArticles = async (topic, sort_by = "created_at", order = "desc") => {
+  let queryStr = `SELECT articles.*,
+  CAST(COUNT(comments.comment_id) AS int) AS comment_count
+  FROM articles
+  LEFT JOIN comments ON comments.article_id = articles.article_id
+  GROUP BY articles.article_id`
+
+  let queryArray = [];
+
+  if (topic !== undefined) {
+      queryStr += ` HAVING topic = $1`;
+      queryArray.push(topic);
+  }
+
+  queryStr += ` ORDER BY ${sort_by} ${order};`;
+
+  const articlesInfo = await db.query(queryStr, queryArray)
+
+  return articlesInfo.rows;
+}
 
 exports.selectArticle = (id) => {
   return db
