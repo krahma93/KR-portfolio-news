@@ -1,25 +1,29 @@
 const db = require("../db/connection");
 
-exports.fetchArticles = async (topic, sort_by = "created_at", order = "desc") => {
+exports.fetchArticles = async (
+  topic,
+  sort_by = "created_at",
+  order = "desc"
+) => {
   let queryStr = `SELECT articles.*,
   CAST(COUNT(comments.comment_id) AS int) AS comment_count
   FROM articles
   LEFT JOIN comments ON comments.article_id = articles.article_id
-  GROUP BY articles.article_id`
+  GROUP BY articles.article_id`;
 
   let queryArray = [];
 
   if (topic !== undefined) {
-      queryStr += ` HAVING topic = $1`;
-      queryArray.push(topic);
+    queryStr += ` HAVING topic = $1`;
+    queryArray.push(topic);
   }
 
   queryStr += ` ORDER BY ${sort_by} ${order};`;
 
-  const articlesInfo = await db.query(queryStr, queryArray)
+  const articlesInfo = await db.query(queryStr, queryArray);
 
   return articlesInfo.rows;
-}
+};
 
 exports.selectArticle = (id) => {
   return db
@@ -44,5 +48,23 @@ exports.updateVotes = (id, votes) => {
     )
     .then(({ rows: article }) => {
       return article[0];
+    });
+};
+
+exports.fetchComments = (id) => {
+  return db
+    .query(
+      `SELECT 
+  comment_id,
+  votes,
+  created_at,
+  author,
+  body
+  FROM comments
+  WHERE article_id = $1`,
+      [id]
+    )
+    .then((comments) => {
+      return comments.rows;
     });
 };

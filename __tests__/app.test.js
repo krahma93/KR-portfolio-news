@@ -410,7 +410,66 @@ describe("api/articles/:article_id", () => {
             });
         });
       });
+      describe(" api/articles/:article_id/comments", () => {
+        test("returns an array of comments for a given article_id", () => {
+          return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then((res) => {
+              const comments = res.body.comments;
+              expect(comments).toBeInstanceOf(Array);
+              expect(comments.length).toBe(11);
+              comments.forEach((comment) => {
+                expect(comment).toEqual(
+                  expect.objectContaining({
+                    comment_id: expect.any(Number),
+                    votes: expect.any(Number),
+                    created_at: expect.any(String),
+                    author: expect.any(String),
+                    body: expect.any(String),
+                  })
+                );
+              });
+            });
+        });
+        test("returns an empty array if there are no comments for the article id", () => {
+          return request(app)
+            .get("/api/articles/4/comments")
+            .expect(200)
+            .then((res) => {
+              const comments = res.body.comments;
+              expect(comments).toBeInstanceOf(Array);
+              expect(comments.length).toBe(0);
+            });
+        });
+        test("404 if URL  is incorrect", () => {
+          return request(app)
+            .get("/api/articles/:article_id/banana")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe("Page not found");
+            });
+        });
+        test("404  if the  id doesn't exist", () => {
+          return request(app)
+            .get("/api/articles/1000")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe("Article id does not exist");
+            });
+        });
+        test("400 if id type is wrong", () => {
+          return request(app)
+            .get("/api/articles/banana")
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe("Bad request");
+            });
+        });
+      });
+
       describe(" 404 Not Found", () => {
+        
         test("returns page not found 404", () => {
           return request(app)
             .get("/api/bananna")
