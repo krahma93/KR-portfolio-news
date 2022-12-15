@@ -468,8 +468,37 @@ describe("api/articles/:article_id", () => {
         });
       });
 
+      describe("Delete /api/comments/:comment_id", () => {
+        test("deletes comment by comment_id and responds with status 204 and no content", () => {
+          return request(app).delete("/api/comments/1").expect(204);
+        });
+        test("404  if URL is incorrect", () => {
+          return request(app)
+            .delete("/api/banana/1")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe("Page not found");
+            });
+        });
+        test("404 if id doesn't exist", () => {
+          return request(app)
+            .delete("/api/comments/1000")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe("Article id does not exist");
+            });
+        });
+        test("400  if id type is wrong", () => {
+          return request(app)
+            .delete("/api/comments/banana")
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.msg).toBe("Bad request");
+            });
+        });
+      });
+
       describe(" 404 Not Found", () => {
-        
         test("returns page not found 404", () => {
           return request(app)
             .get("/api/bananna")
