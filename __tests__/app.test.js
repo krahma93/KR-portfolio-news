@@ -58,10 +58,10 @@ describe("api/articles", () => {
       .expect(200)
       .then((res) => {
         const articles = res.body.articles;
-        expect(articles[0].article_id).toBe(4);
-        expect(articles[0].created_at).toBe("2020-05-06T01:14:00.000Z");
-        expect(articles[11].article_id).toBe(8);
-        expect(articles[11].created_at).toBe("2020-04-17T01:08:00.000Z");
+        expect(articles[0].article_id).toBe(3);
+        expect(articles[0].created_at).toBe("2020-11-03T09:12:00.000Z");
+        expect(articles[11].article_id).toBe(7);
+        expect(articles[11].created_at).toBe("2020-01-07T14:08:00.000Z");
       });
   });
 });
@@ -316,7 +316,89 @@ describe("api/articles/:article_id", () => {
         });
       });
 
+    
 
+describe("/api/articles queries", () => {
+  test("query that filters articles by topic.", () => {
+      return request(app)
+          .get("/api/articles?topic=cats")
+          .expect(200)
+          .then((res) => {
+              const {articles} = res.body;
+              expect(articles).toBeInstanceOf(Array);
+              expect(articles.length).toBe(1);
+              articles.forEach(article => {
+                  expect(article.topic).toEqual("cats")
+              }) 
+          })
+  })
+  test("query that sorts articles by a valid column in descending order", () => {
+      return request(app)
+          .get("/api/articles?sort_by=created_at")
+          .expect(200)
+          .then((res) => {
+              const {articles} = res.body;
+              expect(articles.length).toBe(12);
+              expect(articles[0].article_id).toBe(3)
+              expect(articles[0].created_at).toBe("2020-11-03T09:12:00.000Z")
+              expect(articles[11].article_id).toBe(7)
+              expect(articles[11].created_at).toBe("2020-01-07T14:08:00.000Z")
+          })
+  })
+  test("query that sorts articles by a valid column in ascending order", () => {
+      return request(app)
+          .get("/api/articles?sort_by=created_at&order=asc")
+          .expect(200)
+          .then((res) => {
+              const {articles} = res.body;
+              expect(articles.length).toBe(12);
+              expect(articles[0].article_id).toBe(7)
+              expect(articles[0].created_at).toBe("2020-01-07T14:08:00.000Z")
+              expect(articles[11].article_id).toBe(3)
+              expect(articles[11].created_at).toBe("2020-11-03T09:12:00.000Z")
+          })
+  })
+  test("query that sorts articles by a valid column in ascending order and of a topic", () => {
+      return request(app)
+          .get("/api/articles?topic=mitch&sort_by=created_at&order=asc")
+          .expect(200)
+          .then((res) => {
+              const {articles} = res.body;
+              expect(articles.length).toBe(11);
+              articles.forEach(article => {
+                  expect(article.topic).toEqual("mitch")
+              }) 
+              expect(articles[0].article_id).toBe(7)
+              expect(articles[0].created_at).toBe("2020-01-07T14:08:00.000Z")
+              expect(articles[10].article_id).toBe(3)
+              expect(articles[10].created_at).toBe("2020-11-03T09:12:00.000Z")
+          })
+  })
+  test("400 Invalid sort query if sort_by is invalid", () => {
+      return request(app)
+          .get("/api/articles?sort_by=banana")
+          .expect(400)
+          .then(({ body }) => {
+              expect(body.msg).toBe("incorrect query")
+          }) 
+  })
+  test("400 invalid sort query if order is invalid", () => {
+      return request(app)
+          .get("/api/articles?order=banana")
+          .expect(400)
+          .then(({ body }) => {
+              expect(body.msg).toBe("incorrect query")
+          }) 
+  })
+  test("404 if URL is incorrect", () => {
+      return request(app)
+          .get("/api/banana")
+          .expect(404)
+          .then(({ body }) => {
+              expect(body.msg).toBe("Page not found")
+          }) 
+  })
+})
       describe(" 404 Not Found", () => {
         test("returns page not found 404", () => {
           return request(app)
