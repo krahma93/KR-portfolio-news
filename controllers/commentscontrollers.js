@@ -30,8 +30,7 @@ exports.postArticleComment = (req, res, next) => {
 
 exports.deleteComment = (req, res, next) => {
   const id = req.params.comment_id;
-  const promises = [removeComment(id), selectArticle(id)]
-  Promise.all(promises)
+  return removeComment(id)
   .then((promises) => {
       res.status(204).send(promises);
     })

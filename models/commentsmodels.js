@@ -35,7 +35,11 @@ exports.removeComment = (id) => {
   RETURNING *;`,
       [id]
     )
-    .then((comments) => {
+    .then((comments) => { 
+      if (comments.rows.length === 0)  {return Promise.reject({
+        status: 404,
+        msg: "Article id does not exist",
+      });}
       return comments.rows;
     });
 };
