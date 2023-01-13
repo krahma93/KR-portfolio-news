@@ -1,5 +1,4 @@
 
-# Welcome to Northcoders News API
 ## Introduction
 
 This API project (https://kr-news-portfolio.onrender.com/api/) has been built for the purpose of accessing data programatically. This data will be accessed from the following front-end project: (https://github.com/krahma93/NC-News-FE)
@@ -15,7 +14,8 @@ This API project (https://kr-news-portfolio.onrender.com/api/) has been built fo
 - GET /api/articles/:article_id/comments
 - POST /api/articles/:article_id/comments
 - DELETE /api/comments/:comment_id
-- Note: GET /api/articles endpoint accepts the following queries:
+
+# Note: GET /api/articles endpoint accepts the following queries:
 
 - sortBy, which sorts the articles by any valid column (defaults to date)
 - order, which can be set to asc or desc for ascending or descending (defaults to descending)
