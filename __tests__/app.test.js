@@ -469,7 +469,7 @@ describe("api/articles/:article_id", () => {
       });
 
       describe("Delete /api/comments/:comment_id", () => {
-        test.only("deletes comment by comment_id and responds with status 204 and no content", () => {
+        test("deletes comment by comment_id and responds with status 204 and no content", () => {
           return request(app).delete("/api/comments/1").expect(204);
         });
         test("404  if URL is incorrect", () => {
@@ -480,7 +480,7 @@ describe("api/articles/:article_id", () => {
               expect(body.msg).toBe("Page not found");
             });
         });
-        test.only("404 if id doesn't exist", () => {
+        test("404 if id doesn't exist", () => {
           return request(app)
             .delete("/api/comments/1000")
             .expect(404)
