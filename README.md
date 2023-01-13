@@ -76,3 +76,5 @@ The following command will run the tests:
 - npm test app
 
 Note: Test dependencies are assumed to have already been installed after running npm install when installing the development dependencies.
+
+Link to Trello Board: https://trello.com/b/mD1o7Wo9/nc-news-project-kr 
